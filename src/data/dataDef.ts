@@ -23,7 +23,7 @@ export interface HomepageMeta {
 export interface Hero {
   imageSrc: string;
   name: string;
-  description: JSX.Element;
+  description: string | JSX.Element;
   actions: HeroActionItem[];
 }
 
@@ -90,7 +90,7 @@ export interface TimelineItem {
   date: string;
   location: string;
   title: string;
-  content: JSX.Element;
+  content: string | JSX.Element;
 }
 
 /**
@@ -111,7 +111,7 @@ export interface Testimonial {
  * Contact section
  */
 export interface ContactSection {
-  headerText?: string;
+  headerText: string;
   description: string;
   items: ContactItem[];
 }

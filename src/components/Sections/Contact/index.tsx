@@ -2,8 +2,9 @@ import {DevicePhoneMobileIcon, EnvelopeIcon, MapPinIcon} from '@heroicons/react/
 import classNames from 'classnames';
 import {FC, memo} from 'react';
 
-import {contact, SectionId} from '../../../data/data';
-import {ContactType, ContactValue} from '../../../data/dataDef';
+import {SectionId} from '../../../data/data';
+import contact from '../../../data/contact.json';
+import {ContactType} from '../../../data/dataDef';
 import FacebookIcon from '../../Icon/FacebookIcon';
 import GithubIcon from '../../Icon/GithubIcon';
 import InstagramIcon from '../../Icon/InstagramIcon';
@@ -12,7 +13,7 @@ import TwitterIcon from '../../Icon/TwitterIcon';
 import Section from '../../Layout/Section';
 import ContactForm from './ContactForm';
 
-const ContactValueMap: Record<ContactType, ContactValue> = {
+const ContactValueMap: any = {
   [ContactType.Email]: {Icon: EnvelopeIcon, srLabel: 'Email'},
   [ContactType.Phone]: {Icon: DevicePhoneMobileIcon, srLabel: 'Phone'},
   [ContactType.Location]: {Icon: MapPinIcon, srLabel: 'Location'},

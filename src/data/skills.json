@@ -1,0 +1,70 @@
+[
+  {
+    "name": "Spoken languages",
+    "skills": [
+      {
+        "name": "English",
+        "level": 10
+      },
+      {
+        "name": "French",
+        "level": 4
+      },
+      {
+        "name": "Spanish",
+        "level": 3
+      }
+    ]
+  },
+  {
+    "name": "Frontend development",
+    "skills": [
+      {
+        "name": "React",
+        "level": 9
+      },
+      {
+        "name": "Typescript",
+        "level": 7
+      },
+      {
+        "name": "GraphQL",
+        "level": 6
+      }
+    ]
+  },
+  {
+    "name": "Backend development",
+    "skills": [
+      {
+        "name": "Node.js",
+        "level": 8
+      },
+      {
+        "name": "Rust",
+        "level": 5
+      },
+      {
+        "name": "Golang",
+        "level": 4
+      }
+    ]
+  },
+  {
+    "name": "Mobile development",
+    "skills": [
+      {
+        "name": "React Native",
+        "level": 9
+      },
+      {
+        "name": "Flutter",
+        "level": 4
+      },
+      {
+        "name": "Swift",
+        "level": 3
+      }
+    ]
+  }
+]

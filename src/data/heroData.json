@@ -1,0 +1,47 @@
+{
+  "imageSrc": "/images/header-background.webp",
+  "name": "Umair Ashraf",
+  "description": {
+    "paragraphs": [
+      {
+        "text": "I'm a Victoria based ",
+        "strong": {
+          "text": "Full Stack Software Engineer",
+          "className": "text-stone-100"
+        },
+        "text2": ", currently working at ",
+        "strong2": {
+          "text": "Instant Domains",
+          "className": "text-stone-100"
+        },
+        "text3": " helping build a modern, mobile-first, domain registrar and site builder."
+      },
+      {
+        "text": "In my free time, you can catch me training in ",
+        "strong": {
+          "text": "Muay Thai",
+          "className": "text-stone-100"
+        },
+        "text2": ", plucking my ",
+        "strong2": {
+          "text": "banjo",
+          "className": "text-stone-100"
+        },
+        "text3": ", or exploring beautiful Vancouver Island."
+      }
+    ]
+  },
+  "actions": [
+    {
+      "href": "/assets/resume.pdf",
+      "text": "Resume",
+      "primary": true,
+      "Icon": "ArrowDownTrayIcon"
+    },
+    {
+      "href": "#contact",
+      "text": "Contact",
+      "primary": false
+    }
+  ]
+}

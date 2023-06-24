@@ -1,0 +1,27 @@
+[
+  {
+    "label": "Github",
+    "icon": "GithubIcon",
+    "href": "https://github.com/"
+  },
+  {
+    "label": "Stack Overflow",
+    "icon": "StackOverflowIcon",
+    "href": "https://stackoverflow.com/"
+  },
+  {
+    "label": "LinkedIn",
+    "icon": "LinkedInIcon",
+    "href": "https://www.linkedin.com/"
+  },
+  {
+    "label": "Instagram",
+    "icon": "InstagramIcon",
+    "href": "https://www.instagram.com/"
+  },
+  {
+    "label": "Twitter",
+    "icon": "TwitterIcon",
+    "href": "https://twitter.com/"
+  }
+]

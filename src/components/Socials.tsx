@@ -1,6 +1,44 @@
 import {FC, memo} from 'react';
 
-import {socialLinks} from '../data/data';
+import socialLinksData from '../data/socialLinks.json';
+
+import GithubIcon from '../components/Icon/GithubIcon';
+import StackOverflowIcon from '../components/Icon/StackOverflowIcon';
+import LinkedInIcon from '../components/Icon/LinkedInIcon';
+import InstagramIcon from '../components/Icon/InstagramIcon';
+import TwitterIcon from '../components/Icon/TwitterIcon';
+
+const socialLinks = socialLinksData.map(item => {
+  let IconComponent;
+
+  switch (item.icon) {
+    case 'GithubIcon':
+      IconComponent = GithubIcon;
+      break;
+    case 'StackOverflowIcon':
+      IconComponent = StackOverflowIcon;
+      break;
+    case 'LinkedInIcon':
+      IconComponent = LinkedInIcon;
+      break;
+    case 'InstagramIcon':
+      IconComponent = InstagramIcon;
+      break;
+    case 'TwitterIcon':
+      IconComponent = TwitterIcon;
+      break;
+    default:
+      IconComponent = GithubIcon;
+  }
+
+  return {
+    label: item.label,
+    Icon: IconComponent,
+    href: item.href,
+  };
+});
+
+console.log(socialLinks);
 
 const Socials: FC = memo(() => {
   return (

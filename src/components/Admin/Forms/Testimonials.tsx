@@ -1,13 +1,14 @@
 import classNames from 'classnames';
 import {FC, memo, UIEventHandler, useCallback, useEffect, useMemo, useRef, useState} from 'react';
 
-import {isApple, isMobile} from '../../config';
-import {SectionId, testimonial} from '../../data/data';
-import {Testimonial} from '../../data/dataDef';
-import useInterval from '../../hooks/useInterval';
-import useWindow from '../../hooks/useWindow';
-import QuoteIcon from '../Icon/QuoteIcon';
-import Section from '../Layout/Section';
+import {isApple, isMobile} from '../../../config';
+import {SectionId} from '../../../data/data';
+import testimonial from '../../../data/testimonial.json';
+import {Testimonial} from '../../../data/dataDef';
+import useInterval from '../../../hooks/useInterval';
+import useWindow from '../../../hooks/useWindow';
+import QuoteIcon from '../../Icon/QuoteIcon';
+import Section from '../../Layout/Section';
 
 const Testimonials: FC = memo(() => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
@@ -23,7 +24,7 @@ const Testimonials: FC = memo(() => {
 
   const resolveSrc = useMemo(() => {
     if (!imageSrc) return undefined;
-    return typeof imageSrc === 'string' ? imageSrc : imageSrc.src;
+    return typeof imageSrc === 'string' ? imageSrc : imageSrc;
   }, [imageSrc]);
 
   // Mobile iOS doesn't allow background-fixed elements
