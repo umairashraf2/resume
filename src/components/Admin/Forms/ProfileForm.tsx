@@ -179,7 +179,7 @@ const ProfileForm: React.FC = () => {
           className="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none">
           Update
         </button>
-        {saveSuccess && <p className="text-xs italic text-green-500">Data saved successfully!</p>}
+        {saveSuccess && <p className="text-xs italic text-green-500">Data updated successfully!</p>}
       </form>
     </>
   );
