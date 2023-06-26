@@ -2,9 +2,9 @@
   "version": 2,
   "routes": [
     {
-      "src": "/api/handler",
+      "src": "/api/links",
       "methods": ["GET", "POST"],
-      "dest": "/src/pages/api/handler.js"
+      "dest": "/src/pages/api/links.js"
     }
   ]
 }
