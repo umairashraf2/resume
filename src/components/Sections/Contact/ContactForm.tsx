@@ -48,7 +48,7 @@ const ContactForm: FC = memo(() => {
           throw new Error('Failed to send message');
         }
 
-        const result = await response.json();
+        // const result = await response.json();
         setResponseMessage('Message sent successfully!');
         setErrorMessage('');
       } catch (error) {
