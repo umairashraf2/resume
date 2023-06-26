@@ -7,6 +7,8 @@ import Experience from './Forms/ExperienceForm';
 import SkillsForm from './Forms/SkillsForm';
 import TestimonialsForm from './Forms/TestimonialsForm';
 import ContactForm from './Forms/ContactForm';
+
+// git remote set-url origin https://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@github.com/umairashraf2/resume.git
 const AdminPanel: FC = memo(() => {
   return (
     <>
