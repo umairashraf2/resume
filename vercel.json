@@ -4,7 +4,7 @@
     {
       "src": "/api/links",
       "methods": ["GET", "POST"],
-      "dest": "/src/pages/api/links.js"
+      "dest": "/api/links"
     }
   ]
 }
