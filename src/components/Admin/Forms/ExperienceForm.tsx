@@ -10,7 +10,6 @@ interface EXP {
 const Experience: React.FC = () => {
   const [edu, setEdu] = useState<EXP[]>([]);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
-  //   console.log(links);
 
   useEffect(() => {
     fetch('/api/experience')

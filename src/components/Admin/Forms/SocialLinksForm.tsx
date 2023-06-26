@@ -9,7 +9,6 @@ interface Link {
 const SocialLinks: React.FC = () => {
   const [links, setLinks] = useState<Link[]>([]);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
-  console.log(links);
 
   useEffect(() => {
     fetch('/api/links')

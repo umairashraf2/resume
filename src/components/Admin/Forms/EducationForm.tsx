@@ -10,7 +10,6 @@ interface EDU {
 const Education: React.FC = () => {
   const [edu, setEdu] = useState<EDU[]>([]);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
-  //   console.log(links);
 
   useEffect(() => {
     fetch('/api/education')

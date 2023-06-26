@@ -49,7 +49,6 @@ const ContactForm: FC = memo(() => {
         }
 
         const result = await response.json();
-        console.log('Message sent: ', result);
         setResponseMessage('Message sent successfully!');
         setErrorMessage('');
       } catch (error) {

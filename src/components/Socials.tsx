@@ -38,7 +38,6 @@ const socialLinks = socialLinksData.map(item => {
   };
 });
 
-console.log(socialLinks);
 
 const Socials: FC = memo(() => {
   return (
