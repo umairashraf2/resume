@@ -80,6 +80,8 @@ const UserForm: React.FC = () => {
       </button>
        
       {saveSuccess && <p className="text-xs italic text-green-500">Data updated successfully!</p>}
+      <hr className='my-6'/>
+
     </form>
   );
 };

@@ -96,7 +96,7 @@ const ProfileForm: React.FC = () => {
               <label
                 className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
                 htmlFor={`strong-${index}`}>
-                Paragraph {index + 1} Strong Text
+                Paragraph {index + 1} Bold Text
               </label>
               <input
                 className="mb-3 block w-full appearance-none rounded border border-gray-200 bg-gray-200 px-4 py-3 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
@@ -135,7 +135,7 @@ const ProfileForm: React.FC = () => {
               <label
                 className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
                 htmlFor={`strong-${index}`}>
-                Paragraph {index + 1} Strong 2 Text
+                Paragraph {index + 1} Bold 2 Text
               </label>
               <input
                 className="mb-3 block w-full appearance-none rounded border border-gray-200 bg-gray-200 px-4 py-3 leading-tight text-gray-700 focus:border-gray-500 focus:bg-white focus:outline-none"
@@ -180,6 +180,8 @@ const ProfileForm: React.FC = () => {
           Update
         </button>
         {saveSuccess && <p className="text-xs italic text-green-500">Data updated successfully!</p>}
+      <hr className='my-6'/>
+
       </form>
     </>
   );
