@@ -3,6 +3,8 @@ import {  NextPage } from 'next';
 import AdminPanel from '../components/Admin/AdminPanel';
 import Link from 'next/link'
 import Navbar from "../components/Admin/Navbar"
+import Head from 'next/head';
+
 type ServerSideProps = {
   loggedIn: boolean;
 }
@@ -30,16 +32,21 @@ const Admin: NextPage<ServerSideProps> = () => {
 
   return (
     <div>
-      <Navbar/>
-      <div className="flex justify-center my-4">
-        
-  <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-    <Link href="/messages">
-    See Messages
-  </Link>
-
-  </button>
-</div>
+      <Head>
+        <title>Admin | Daniel Resume</title>
+        <link href="/fav.jpg" rel="icon" />
+      </Head>
+      <Navbar />
+      <div className="my-4 flex justify-center">
+        <button className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+          <Link href="/">Home</Link>
+        </button>
+      </div>
+      <div className="my-4 flex justify-center">
+        <button className="rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700">
+          <Link href="/messages">See Messages</Link>
+        </button>
+      </div>
 
       <h1 className="my-4 text-center text-xl text-white">Resume Upload Form</h1>
 
