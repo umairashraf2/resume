@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/handler",
+      "methods": ["GET", "POST"],
+      "dest": "/src/pages/api/handler.js"
+    }
+  ]
+}
