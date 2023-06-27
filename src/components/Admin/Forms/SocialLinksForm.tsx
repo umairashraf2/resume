@@ -10,10 +10,16 @@ const SocialLinks: React.FC = () => {
   const [links, setLinks] = useState<Link[]>([]);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
 
-  useEffect(() => {
+ useEffect(() => {
     fetch('/api/links')
-      .then(response => response.json())
-      .then(data => setLinks(data));
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch social links data');
+        }
+        return response.json();
+      })
+      .then(data => setLinks(data))
+      .catch(err => console.log(err));
   }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
