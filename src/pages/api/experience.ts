@@ -1,17 +1,45 @@
-import type {NextApiRequest, NextApiResponse} from 'next';
-const fs = require('fs');
-import path from 'path';
+import {db} from '@vercel/postgres';
+import {NextApiRequest, NextApiResponse} from 'next';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+type Experience = {
+  date: string;
+  location: string;
+  title: string;
+  content: string;
+};
+
+export default async function handler(req: NextApiRequest, res: NextApiResponse<Experience[] | {message: string}>) {
   if (req.method === 'GET') {
-    const data = fs.readFileSync(path.join(process.cwd(), 'src/data/experience.json'), 'utf-8');
-    const userData = JSON.parse(data);
-    res.status(200).json(userData);
+    try {
+      const client = await db.connect();
+      const result = await client.query('SELECT * FROM work_experience;');
+      console.log(999,result.rows)
+      const experienceData: Experience[] = result.rows;
+      client.release();
+      res.status(200).json(experienceData);
+    } catch (error) {
+      console.error('Error retrieving experience data:', error);
+      res.status(500).json({message: 'Internal Server Error'});
+    }
   } else if (req.method === 'POST') {
-    const userData = req.body;
-    const data = JSON.stringify(userData, null, 2);
-    fs.writeFileSync(path.join(process.cwd(), 'src/data/experience.json'), data, 'utf-8');
-    res.status(200).json({message: 'Data updated successfully'});
+    const { date, location, title, content} = req.body[0];
+
+    if (!date || !location || !title || !content) {
+      return res.status(400).json({message: 'Invalid request'});
+    }
+
+    try {
+      const client = await db.connect();
+      await client.query(
+        'UPDATE work_experience SET date = $1, location = $2, title = $3, content = $4 WHERE id = $5;',
+        [date, location, title, content, 1], // Replace 1 with the appropriate ID value of the row you want to update
+      );
+      client.release();
+      res.status(200).json({message: 'Data updated successfully'});
+    } catch (error) {
+      console.error('Error updating experience data:', error);
+      res.status(500).json({message: 'Internal Server Error'});
+    }
   } else {
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);

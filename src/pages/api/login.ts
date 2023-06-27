@@ -1,29 +1,35 @@
-import type {NextApiRequest, NextApiResponse} from 'next';
+import {db} from '@vercel/postgres';
+import {NextApiRequest, NextApiResponse} from 'next';
 
 type Data = {
   message: string;
 };
 
-export default function handler(req: NextApiRequest, res: NextApiResponse<Data>) {
-  const {method} = req;
+export default async function handler(request: NextApiRequest, response: NextApiResponse<Data>) {
+  if (request.method !== 'POST') {
+    return response.status(405).end(`Method ${request.method} Not Allowed`);
+  }
 
-  switch (method) {
-    case 'POST':
-      // Insert your own authentication mechanism here. For example,
-      // you can check the username and password in your database.
-      const {username, password} = req.body;
+  const {username, password} = request.body;
 
-      if (username === 'daniel' && password === 'daniel[111]') {
-        // Normally you wouldn't store the logged in user status in a cookie like this
-        // You would have some kind of session handling here
-        res.setHeader('Set-Cookie', 'loggedIn=true; Path=/;');
-        res.status(200).json({message: 'Logged in'});
-      } else {
-        res.status(401).json({message: 'Unauthorized'});
-      }
-      break;
-    default:
-      res.setHeader('Allow', ['POST']);
-      res.status(405).end(`Method ${method} Not Allowed`);
+  if (!username || !password) {
+    return response.status(400).json({message: 'Invalid request'});
+  }
+
+  const client = await db.connect();
+
+  try {
+    const result = await client.sql`SELECT * FROM login WHERE username = ${username} AND password = ${password};`;
+
+    if (result.rowCount === 1) {
+      response.setHeader('Set-Cookie', 'loggedIn=true; Path=/;');
+      response.status(200).json({message: 'Logged in'});
+    } else {
+      response.status(401).json({message: 'Unauthorized'});
+    }
+  } catch (error) {
+    response.status(500).json({message: 'Internal Server Error'});
+  } finally {
+    client.release();
   }
 }

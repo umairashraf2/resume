@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 
 interface EDU {
+  id: number;
   date: string;
   location: string;
   title: string;
@@ -13,8 +14,14 @@ const Education: React.FC = () => {
 
   useEffect(() => {
     fetch('/api/education')
-      .then(response => response.json())
-      .then(data => setEdu(data));
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch education data');
+        }
+        return response.json();
+      })
+      .then(data => setEdu(data))
+      .catch(err => console.log(err));
   }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -30,7 +37,7 @@ const Education: React.FC = () => {
     });
   };
 
-  if (!edu) {
+  if (edu.length===0) {
     return <div>Loading...</div>;
   }
 
@@ -39,6 +46,15 @@ const Education: React.FC = () => {
       {edu.map((item, index) => (
         <div className="-mx-3 mb-6 flex flex-wrap" key={index}>
           <div className="w-full px-3">
+            <input
+              type="hidden" // Add a hidden input field for the ID
+              value={item.id}
+              onChange={e => {
+                const educ = [...edu];
+                educ[index].id = Number(e.target.value);
+                setEdu([...educ]);
+              }}
+            />
             <label
               className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
               htmlFor={`item-${index}`}>
