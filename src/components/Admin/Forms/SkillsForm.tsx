@@ -14,11 +14,17 @@ const SkillsForm: React.FC = () => {
   const [categories, setCategories] = useState<SkillCategory[]>([]);
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
 
-  useEffect(() => {
-    fetch('/api/skills')
-      .then(response => response.json())
-      .then(data => setCategories(data));
-  }, []);
+ useEffect(() => {
+   fetch('/api/skills')
+     .then(response => {
+       if (!response.ok) {
+         throw new Error('Failed to fetch skills data');
+       }
+       return response.json();
+     })
+     .then(data => setCategories(data))
+     .catch(err => console.log(err));
+ }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();

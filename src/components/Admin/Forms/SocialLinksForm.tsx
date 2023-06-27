@@ -57,7 +57,7 @@ const SocialLinks: React.FC = () => {
               onChange={e => {
                 const link = [...links];
                 link[index].href = e.target.value;
-                setLinks([...link]);
+                setLinks(link);
               }}
             />
           </div>

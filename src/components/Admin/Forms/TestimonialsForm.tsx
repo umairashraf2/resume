@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, {useState, useEffect} from 'react';
 
 interface Testimonial {
   name: string;
@@ -12,8 +12,14 @@ const TestimonialsForm: React.FC = () => {
 
   useEffect(() => {
     fetch('/api/testimonial')
-      .then(response => response.json())
-      .then(data => setTestimonials(data.testimonials));
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch social testimonials data');
+        }
+        return response.json();
+      })
+      .then(data => setTestimonials(data))
+      .catch(err => console.log(err));
   }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -21,7 +27,7 @@ const TestimonialsForm: React.FC = () => {
     fetch('/api/testimonial', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({ testimonials }),
+      body: JSON.stringify(testimonials),
     }).then(response => {
       if (response.ok) {
         setSaveSuccess(true);
@@ -33,7 +39,7 @@ const TestimonialsForm: React.FC = () => {
     <form onSubmit={handleSubmit} className="mx-auto my-10 w-full max-w-lg">
       {testimonials.map((testimonial, index) => (
         <div key={index} className="-mx-3 mb-6 flex flex-wrap">
-          <div className="w-full px-3 mb-2">
+          <div className="mb-2 w-full px-3">
             <label
               className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
               htmlFor={`name-${index}`}>
@@ -51,7 +57,7 @@ const TestimonialsForm: React.FC = () => {
               }}
             />
           </div>
-          <div className="w-full px-3 mb-2">
+          <div className="mb-2 w-full px-3">
             <label
               className="mb-2 block text-xs font-bold uppercase tracking-wide text-gray-700"
               htmlFor={`text-${index}`}>
@@ -95,8 +101,7 @@ const TestimonialsForm: React.FC = () => {
         Update
       </button>
       {saveSuccess && <p className="text-xs italic text-green-500">Data updated successfully!</p>}
-      <hr className='my-6'/>
-
+      <hr className="my-6" />
     </form>
   );
 };

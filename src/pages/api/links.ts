@@ -26,14 +26,15 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       return res.status(400).json({message: 'Invalid request'});
     }
     const client = await db.connect();
+    await client.query('BEGIN')
+    // delete all rows
+    await client.query('TRUNCATE social_link RESTART IDENTITY');
     for (const link of socialLinks) {
       if (!link.label || !link.icon || !link.href) {
         return res.status(400).json({message: 'Invalid request'});
       }
 
       try {
-        // delete all rows
-        await client.query('TRUNCATE social_link RESTART IDENTITY');
         await client.query('INSERT INTO social_link (label, icon, href) VALUES ($1, $2, $3);', [
           link.label,
           link.icon,
@@ -44,6 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         res.status(500).json({message: 'Internal Server Error'});
       }
     }
+    await client.query('COMMIT')
     client.release();
     res.status(200).json({message: 'Data updated successfully'});
   } else {

@@ -192,7 +192,7 @@ export const skills: SkillGroup[] = [
 ];
 
 /**
- * Portfolio section
+ * 
  */
 export const portfolioItems: PortfolioItem[] = [
   {
