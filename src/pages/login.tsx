@@ -1,5 +1,6 @@
 import {useState} from 'react';
 import {useRouter} from 'next/router'; // import useRouter
+import Link from 'next/link';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -31,8 +32,9 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100">
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md p-3">
         <form onSubmit={handleSubmit} className="mb-4 rounded-lg bg-white px-8 pb-8 pt-6 shadow-lg">
+          <h1 className="text-center font-bold text-2xl mb-2">Admin</h1>
           <div className="mb-4">
             <label className="mb-2 block text-sm font-bold text-gray-700">Username</label>
             <input
@@ -53,12 +55,16 @@ export default function Login() {
               placeholder="Password"
             />
           </div>
+          
           <div className="flex items-center justify-between">
             <button
               className="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none"
               type="submit">
               Log in
             </button>
+            <p className="text-blue-500 underline">
+            <Link href="/">Home</Link>
+            </p>
           </div>
         </form>
       </div>

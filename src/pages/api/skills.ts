@@ -1,6 +1,4 @@
 import type {NextApiRequest, NextApiResponse} from 'next';
-const fs = require('fs');
-import path from 'path';
 
 import { db } from '@vercel/postgres';
 

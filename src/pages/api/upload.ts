@@ -1,14 +1,28 @@
-import multer, {Multer, MulterError} from 'multer';
-const fs = require('fs');
-import path from 'path';
-import {promisify} from 'util';
+import {Multer, MulterError} from 'multer';
+import multer from 'multer';
+import * as firebase from 'firebase/app';
+import { getStorage, ref,  uploadBytes } from "firebase/storage";
+
+// Your web app's Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyCx4C2G_h2jXoFjKpBoveNbt1SEByX6aUc",
+  authDomain: "daniel-we.firebaseapp.com",
+  projectId: "daniel-we",
+  storageBucket: "daniel-we.appspot.com",
+  messagingSenderId: "771178122800",
+  appId: "1:771178122800:web:3402520bb668280bf0e7f5",
+  measurementId: "G-DECDJLFQ7X"
+};
+
+// Initialize Firebase
+if (firebase.getApps().length===0) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 const upload: Multer = multer({
-  dest: 'uploads/',
+  storage: multer.memoryStorage(), // we will store the file in memory
   limits: {fileSize: 5 * 1024 * 1024}, // limit file size to 5MB
 });
-
-const writeFile = promisify(fs.writeFile);
 
 export const config = {
   api: {
@@ -16,23 +30,30 @@ export const config = {
   },
 };
 
-const handler = async (req: any, res: any) => {
+const handler = async (req: any, res:any) => {
   if (req.method === 'POST') {
     const uploadMiddleware = upload.single('file');
 
     try {
       await new Promise((resolve, reject) => {
-        uploadMiddleware(req, res, (error: any) => (error ? reject(error) : resolve(req.file)));
+        uploadMiddleware(req, res, (error: any) => (error ? reject(error) : resolve(null)));
       });
 
-      if (req.file?.mimetype !== 'application/pdf') {
+      if (!req.file || req.file.mimetype !== 'application/pdf') {
         res.status(400).json({error: 'Invalid file format. Only PDF allowed.'});
         return;
       }
 
-      await writeFile(path.resolve('public/assets', 'Resume.pdf'), fs.readFileSync(req.file.path));
+      // Get a reference to the storage service, which is used to create references in your storage bucket
+      const storage = getStorage();
 
-      fs.unlinkSync(req.file.path);
+      // Create a storage reference from our storage service
+      // const storageRef = ref(storage);
+      const fileRef = ref(storage,'Resume.pdf');
+      // 'file' comes from the Blob or File API
+      uploadBytes(fileRef, req.file.buffer).then((snapshot) => {
+        console.log('Uploaded a blob or file!', snapshot);
+      });
 
       res.status(200).json({message: 'File uploaded successfully.'});
     } catch (error: any) {
