@@ -7,48 +7,77 @@ type Testimonial = {
   image: string;
 };
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse<Testimonial[] | {message: string}>) {
+type TestimonialWithImageSrc = {
+  imageSrc: string;
+  testimonials: Testimonial[];
+};
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<TestimonialWithImageSrc | {message: string}>,
+) {
   if (req.method === 'GET') {
     try {
       const client = await db.connect();
-      const result = await client.query('SELECT * FROM testimonial_items;');
-      const testimonials: Testimonial[] = result.rows;
+      const result = await client.query(`
+        SELECT
+          jsonb_build_object(
+            'imageSrc', testimonial.imageSrc,
+            'testimonials', jsonb_agg(jsonb_build_object(
+              'text', testimonial_items.text,
+              'name', testimonial_items.name,
+              'image', testimonial_items.image
+            ))
+          ) AS result
+        FROM
+          testimonial
+        JOIN
+          testimonial_items ON testimonial.id = testimonial_items.testimonial_id
+        GROUP BY
+          testimonial.imageSrc;
+      `);
+      const testimonials: TestimonialWithImageSrc = result.rows[0].result
       client.release();
       res.status(200).json(testimonials);
     } catch (error) {
       console.error('Error retrieving testimonials:', error);
       res.status(500).json({message: 'Internal Server Error'});
     }
-  } else if (req.method === 'POST') {
-    const testimonials = req.body;
+ 
+} else if (req.method === 'POST') {
+  const testimonials:  Testimonial[] = req.body;
 
-    if (!Array.isArray(testimonials)) {
-      return res.status(400).json({message: 'Invalid request'});
-    }
-    const client = await db.connect();
+  if (!Array.isArray(testimonials)) {
+    return res.status(400).json({message: 'Invalid request'});
+  }
+
+  const client = await db.connect();
+  try {
     await client.query('BEGIN'); // Start transaction
-    // delete all rows
-    await client.query('TRUNCATE testimonial_items RESTART IDENTITY');
+    await client.query('DELETE FROM testimonial_items');
+
     for (const testimonial of testimonials) {
       if (!testimonial.name || !testimonial.text || !testimonial.image) {
         return res.status(400).json({message: 'Invalid request'});
       }
 
-      try {
-        await client.query('INSERT INTO testimonial_items (name, text, image) VALUES ($1, $2, $3);', [
-          testimonial.name,
-          testimonial.text,
-          testimonial.image,
-        ]);
-      } catch (error) {
-        console.error('Error updating testimonials:', error);
-        res.status(500).json({message: 'Internal Server Error'});
-      }
+      await client.query('INSERT INTO testimonial_items (name, text, image) VALUES ($1, $2, $3)', [
+        testimonial.name,
+        testimonial.text,
+        testimonial.image,
+      ]);
     }
-    await client.query('COMMIT')
+
+    await client.query('COMMIT');
     client.release();
     res.status(200).json({message: 'Data updated successfully'});
-  } else {
+  } catch (error) {
+    await client.query('ROLLBACK');
+    console.error('Error updating testimonials:', error);
+    res.status(500).json({message: 'Internal Server Error'});
+  }
+}
+ else {
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }

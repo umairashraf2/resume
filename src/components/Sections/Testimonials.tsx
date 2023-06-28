@@ -3,7 +3,6 @@ import {FC, memo, UIEventHandler, useCallback, useEffect, useMemo, useRef, useSt
 
 import {isApple, isMobile} from '../../config';
 import {SectionId} from '../../data/data';
-import testimonial from '../../data/testimonial.json';
 import {Testimonial} from '../../data/dataDef';
 import useInterval from '../../hooks/useInterval';
 import useWindow from '../../hooks/useWindow';
@@ -14,13 +13,30 @@ const Testimonials: FC = memo(() => {
   const [activeIndex, setActiveIndex] = useState<number>(0);
   const [scrollValue, setScrollValue] = useState(0);
   const [parallaxEnabled, setParallaxEnabled] = useState(false);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]); // Initial state for testimonials
+  const [imageSrc, setImageSrc] = useState<string | undefined>();
 
   const itemWidth = useRef(0);
   const scrollContainer = useRef<HTMLDivElement>(null);
 
   const {width} = useWindow();
 
-  const {imageSrc, testimonials} = testimonial;
+    // Fetch testimonials data
+ useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch('/api/testimonial');
+        const data = await response.json();
+        setTestimonials(data.testimonials);
+        setImageSrc(data.imageSrc);
+      } catch (error) {
+        console.error('Failed to fetch testimonials', error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
   const resolveSrc = useMemo(() => {
     if (!imageSrc) return undefined;
@@ -66,9 +82,9 @@ const Testimonials: FC = memo(() => {
   useInterval(next, 10000);
 
   // If no testimonials, don't render the section
-  if (!testimonials.length) {
-    return null;
-  }
+  // if (testimonials.length===0) {
+  //   return null;
+  // }
 
   return (
     <Section noPadding sectionId={SectionId.Testimonials}>

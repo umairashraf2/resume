@@ -18,7 +18,7 @@ const TestimonialsForm: React.FC = () => {
         }
         return response.json();
       })
-      .then(data => setTestimonials(data))
+      .then(data => setTestimonials(data.testimonials))
       .catch(err => console.log(err));
   }, []);
 
