@@ -44,7 +44,7 @@ const Testimonials: FC = memo(() => {
   }, [itemWidth, scrollValue]);
 
   const setTestimonial = useCallback(
-    (index: number) => () => {
+    (index: number) => () => {                  
       if (scrollContainer !== null && scrollContainer.current !== null) {
         scrollContainer.current.scrollLeft = itemWidth.current * index;
       }

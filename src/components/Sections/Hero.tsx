@@ -1,12 +1,29 @@
 import {ChevronDownIcon} from '@heroicons/react/24/outline';
 import classNames from 'classnames';
 import Image from 'next/image';
-import {FC, memo} from 'react';
+import {FC, memo, useState, useEffect} from 'react';
 
 import {SectionId} from '../../data/data';
 import heroDatas from '../../data/heroData.json';
 import Section from '../Layout/Section';
 import Socials from '../Socials';
+import { initializeApp } from 'firebase/app';
+import { getStorage, ref, getDownloadURL } from "firebase/storage";
+
+// Your Firebase configuration
+const firebaseConfig = {
+  apiKey: 'AIzaSyCx4C2G_h2jXoFjKpBoveNbt1SEByX6aUc',
+  authDomain: 'daniel-we.firebaseapp.com',
+  projectId: 'daniel-we',
+  storageBucket: 'daniel-we.appspot.com',
+  messagingSenderId: '771178122800',
+  appId: '1:771178122800:web:3402520bb668280bf0e7f5',
+  measurementId: 'G-DECDJLFQ7X',
+};
+
+
+// Initialize Firebase
+initializeApp(firebaseConfig);
 
 const Hero: FC = memo(() => {
   const {
@@ -15,6 +32,18 @@ const Hero: FC = memo(() => {
     description: {paragraphs},
     actions,
   } = heroDatas;
+const [fileUrl,setFileUrl] = useState('')  
+  const downloadFile = async () => {
+    // event.preventDefault();
+
+    const storage = getStorage();
+    const fileRef = ref(storage, 'Resume.pdf');
+    const url = await getDownloadURL(fileRef);
+
+    // Assign the download URL to the href of the <a> tag
+    setFileUrl(url)
+  };
+  useEffect(()=>{downloadFile()},[downloadFile])
 
   return (
     <Section noPadding sectionId={SectionId.Hero}>
@@ -55,7 +84,7 @@ const Hero: FC = memo(() => {
                     'flex gap-x-2 rounded-full border-2 bg-none px-4 py-2 text-sm font-medium text-white ring-offset-gray-700/80 hover:bg-gray-700/80 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:text-base',
                     primary ? 'border-orange-500 ring-orange-500' : 'border-white ring-white',
                   )}
-                  href={href}
+                  href={primary ? fileUrl : href}
                   key={text}>
                   {text}
                 </a>

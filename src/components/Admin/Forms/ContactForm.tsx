@@ -18,8 +18,14 @@ const ContactForm: React.FC = () => {
 
   useEffect(() => {
     fetch('/api/contact')
-      .then(response => response.json())
-      .then(data => setContactData(data));
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch contact data');
+        }
+        return response.json();
+      })
+      .then(data => setContactData(data))
+      .catch(err => console.log(err));
   }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
