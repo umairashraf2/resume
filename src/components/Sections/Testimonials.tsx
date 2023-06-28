@@ -22,21 +22,18 @@ const Testimonials: FC = memo(() => {
   const {width} = useWindow();
 
     // Fetch testimonials data
- useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('/api/testimonial');
-        const data = await response.json();
-        setTestimonials(data.testimonials);
-        setImageSrc(data.imageSrc);
-      } catch (error) {
-        console.error('Failed to fetch testimonials', error);
-      }
-    };
 
-    fetchData();
+useEffect(() => {
+    fetch('/api/testimonial')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch social testimonials data');
+        }
+        return response.json();
+      })
+      .then(data => {setTestimonials(data.testimonials); setImageSrc(data.imageSrc);})
+      .catch(err => console.log(err));
   }, []);
-
 
   const resolveSrc = useMemo(() => {
     if (!imageSrc) return undefined;
@@ -109,7 +106,7 @@ const Testimonials: FC = memo(() => {
               })}
             </div>
             <div className="flex gap-x-4">
-              {[...Array(testimonials.length)].map((_, index) => {
+              {testimonials.length>0 && [...Array(testimonials.length)].map((_, index) => {
                 const isActive = index === activeIndex;
                 return (
                   <button

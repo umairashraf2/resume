@@ -54,17 +54,19 @@ export default async function handler(
   const client = await db.connect();
   try {
     await client.query('BEGIN'); // Start transaction
-    await client.query('DELETE FROM testimonial_items');
+    await client.query('TRUNCATE testimonial_items RESTART IDENTITY');
+
 
     for (const testimonial of testimonials) {
       if (!testimonial.name || !testimonial.text || !testimonial.image) {
         return res.status(400).json({message: 'Invalid request'});
       }
 
-      await client.query('INSERT INTO testimonial_items (name, text, image) VALUES ($1, $2, $3)', [
+      await client.query('INSERT INTO testimonial_items (name, text, image, id) VALUES ($1, $2, $3, $4)', [
         testimonial.name,
         testimonial.text,
         testimonial.image,
+        1
       ]);
     }
 
