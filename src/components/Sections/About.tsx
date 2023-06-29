@@ -1,13 +1,46 @@
 import classNames from 'classnames';
 import Image from 'next/image';
-import {FC, memo} from 'react';
+import {FC, memo, useEffect, useState} from 'react';
 
 import {SectionId} from '../../data/data';
-import aboutDatas from '../../data/about.json';
 import Section from '../Layout/Section';
 
+interface AboutDataItem {
+  label: string;
+  text: string;
+}
+
+interface AboutData {
+  profileImageSrc: string;
+  description: string;
+  aboutItems: AboutDataItem[];
+}
+
 const About: FC = memo(() => {
-  const {profileImageSrc ,description, aboutItems} = aboutDatas;
+  const [aboutData, setAboutData] = useState<AboutData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/user')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch about data');
+        }
+        return response.json();
+      })
+      .then(data => {
+        setAboutData(data);
+        setLoading(false);
+      })
+      .catch(err => console.log(err));
+  }, []);
+
+  if (loading) {
+    return <div>Loading...</div>; //Or your own custom loading component
+  }
+
+  const {profileImageSrc ,description, aboutItems} = aboutData!;
+  
   return (
     <Section className="bg-neutral-800" sectionId={SectionId.About}>
       <div className={classNames('grid grid-cols-1 gap-y-4', {'md:grid-cols-4': !!profileImageSrc})}>
@@ -26,7 +59,6 @@ const About: FC = memo(() => {
           <ul className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             {aboutItems.map(({ label, text }, idx) => (
               <li className="col-span-1 flex  items-start gap-x-2" key={idx}>
-
                 <span className="text-sm font-bold text-white">{label}:</span>
                 <span className=" text-sm text-gray-300">{text}</span>
               </li>

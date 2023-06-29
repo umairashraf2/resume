@@ -1,27 +1,23 @@
-import { NextApiRequest, NextApiResponse } from "next";
-const fs = require('fs');
-import path from 'path';
-import { promisify } from 'util';
+import { db } from '@vercel/postgres';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-const readFile = promisify(fs.readFile);
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<{ messages: string[] }>) {
   if (req.method === 'GET') {
-    try {
-      // Read the data from the JSON file
-      const data = await readFile(path.resolve('./src/data/messages.json'), 'utf8');
+    const client = await db.connect();
 
-      // Parse the data as JSON and send it in the response
-      const jsonData = JSON.parse(data);
-      res.status(200).json(jsonData);
-    } catch (error:any) {
-      // If an error occurred, send a 500 response with the error message
-      res.status(500).json({ error: error.message });
+    try {
+      const result = await client.query('SELECT * FROM message;');
+      const messages = result.rows;
+      res.status(200).json({ messages });
+    } catch (error) {
+      console.error('Error retrieving messages:', error);
+      res.status(500).json({ messages: ['Internal Server Error'] });
+
+    } finally {
+      client.release();
     }
   } else {
-    // If the request method is not GET, send a 405 response
-    res.status(405).json({ error: 'Method not allowed. Please send a GET request.' });
+    res.setHeader('Allow', ['GET']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
-};
-
-export default handler;
+}

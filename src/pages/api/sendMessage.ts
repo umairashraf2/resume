@@ -1,51 +1,39 @@
-import {NextApiRequest, NextApiResponse} from 'next';
-import { v4 as uuidv4 } from 'uuid';
-const fs = require('fs');
-import path from 'path';
-import {promisify} from 'util';
+import { db } from '@vercel/postgres';
+import { NextApiRequest, NextApiResponse } from 'next';
 
-const appendFile = promisify(fs.appendFile);
-const readFile = promisify(fs.readFile);
-
-const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-  if (req.method === 'POST') {
-    const {name, email, message} = req.body;
-    try {
-      const filePath = path.resolve('./src/data/messages.json');
-
-      // Check if messages.json exists, if not create an initial empty array in the file
-      if (!fs.existsSync(filePath)) {
-        await appendFile(filePath, JSON.stringify([]));
-      }
-
-      // Read current contents of the file
-      const currentContents = await readFile(filePath, 'utf8');
-
-      // Parse it as JSON
-      const data = JSON.parse(currentContents);
-
-      // Add the new message with a UUID and the current date to the array
-      data.push({
-        id: uuidv4(),
-        date: new Date().toLocaleString(),
-        name, 
-        email, 
-        message
-      });
-
-      // Write the updated data back to the file
-      await fs.promises.writeFile(filePath, JSON.stringify(data), 'utf8');
-
-      // Send a 200 response
-      res.status(200).json({status: 'success', message: 'Message saved successfully'});
-    } catch (error:any) {
-      // If an error occurred, send a 500 response with the error message
-      res.status(500).json({error: error.message});
-    }
-  } else {
-    // If the request method is not POST, send a 405 response
-    res.status(405).json({error: 'Method not allowed. Please send a POST request.'});
-  }
+type FormData = {
+  name: string;
+  email: string;
+  message: string;
 };
 
-export default handler;
+export default async function handler(req: NextApiRequest, res: NextApiResponse<{ message: string }>) {
+  if (req.method === 'POST') {
+    const formData: FormData = req.body;
+    
+    console.log('formData:', formData);
+
+    if (!formData || !formData.name || !formData.email || !formData.message) {
+      return res.status(400).json({ message: 'Invalid request' });
+    }
+
+    const client = await db.connect();
+
+    try {
+      await client.query(
+        'INSERT INTO message (name, email, message, date) VALUES ($1, $2, $3, NOW());',
+        [formData.name, formData.email, formData.message]
+      );
+    } catch (error) {
+      console.error('Error inserting form data:', error);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    } finally {
+      client.release();
+    }
+
+    res.status(200).json({ message: 'Data inserted successfully' });
+  } else {
+    res.setHeader('Allow', ['POST']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
+  }
+}

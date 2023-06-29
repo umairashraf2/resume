@@ -196,21 +196,21 @@ export const skills: SkillGroup[] = [
  */
 export const portfolioItems: PortfolioItem[] = [
   {
-    title: 'Project title 1',
-    description: 'Give a short description of your project here.',
-    url: '#',
+    title: 'Marvel Api',
+    description: "Marvel API: Unleash Marvel's universe in your applications.",
+    url: 'https://marvels-api.web.app/',
     image: porfolioImage1,
   },
   {
-    title: 'Project title 2',
-    description: 'Give a short description of your project here.',
-    url: '#',
+    title: 'Car Inventory',
+    description: 'Add your cars in app',
+    url: 'https://car-invertory.web.app/',
     image: porfolioImage2,
   },
   {
-    title: 'Project title 3',
-    description: 'Give a short description of your project here.',
-    url: '#',
+    title: 'Wheather Temprature',
+    description: 'Your city wheather temprature fi',
+    url: 'https://umairashraf2.github.io/html_wheather_template/',
     image: porfolioImage3,
   },
   {

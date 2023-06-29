@@ -15,7 +15,7 @@ export default function Messages() {
   useEffect(() => {
     fetch('/api/messages')
       .then(response => response.json())
-      .then(data => setMessages(data));
+      .then(data => setMessages(data.messages));
   }, []);
 
   const handleDelete = async (id: string) => {

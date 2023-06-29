@@ -36,50 +36,50 @@ export default async function handler(
         GROUP BY
           testimonial.imageSrc;
       `);
-      const testimonials: TestimonialWithImageSrc = result.rows[0].result
+      const testimonials: TestimonialWithImageSrc = result.rows[0].result;
       client.release();
       res.status(200).json(testimonials);
     } catch (error) {
       console.error('Error retrieving testimonials:', error);
       res.status(500).json({message: 'Internal Server Error'});
     }
- 
-} else if (req.method === 'POST') {
-  const testimonials:  Testimonial[] = req.body;
+  } else if (req.method === 'POST') {
+    const testimonials: Testimonial[] = req.body;
 
-  if (!Array.isArray(testimonials)) {
-    return res.status(400).json({message: 'Invalid request'});
-  }
-
-  const client = await db.connect();
-  try {
-    await client.query('BEGIN'); // Start transaction
-    await client.query('TRUNCATE testimonial_items RESTART IDENTITY');
-
-
-    for (const testimonial of testimonials) {
-      if (!testimonial.name || !testimonial.text || !testimonial.image) {
-        return res.status(400).json({message: 'Invalid request'});
-      }
-
-      await client.query('INSERT INTO testimonial_items (name, text, image, id) VALUES ($1, $2, $3, $4)', [
-        testimonial.name,
-        testimonial.text,
-        testimonial.image,
-        1
-      ]);
+    if (!Array.isArray(testimonials)) {
+      return res.status(400).json({message: 'Invalid request'});
     }
 
-    await client.query('COMMIT');
-    client.release();
-    res.status(200).json({message: 'Data updated successfully'});
-  } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('Error updating testimonials:', error);
-    res.status(500).json({message: 'Internal Server Error'});
-  }
-}
- else {
+    const client = await db.connect();
+    try {
+      await client.query('BEGIN'); // Start transaction
+
+      // Assuming you are using 1 as testimonial id, change this value according to your needs
+      const testimonialId = 1;
+
+      // Clear all testimonial items related to a specific testimonial id
+      await client.query('DELETE FROM testimonial_items WHERE testimonial_id = $1', [testimonialId]);
+
+      for (const testimonial of testimonials) {
+        if (!testimonial.name || !testimonial.text || !testimonial.image) {
+          return res.status(400).json({message: 'Invalid request'});
+        }
+
+        await client.query(
+          'INSERT INTO testimonial_items (name, text, image, testimonial_id) VALUES ($1, $2, $3, $4)',
+          [testimonial.name, testimonial.text, testimonial.image, testimonialId],
+        );
+      }
+
+      await client.query('COMMIT');
+      client.release();
+      res.status(200).json({message: 'Data updated successfully'});
+    } catch (error) {
+      await client.query('ROLLBACK');
+      console.error('Error updating testimonials:', error);
+      res.status(500).json({message: 'Internal Server Error'});
+    }
+  } else {
     res.setHeader('Allow', ['GET', 'POST']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }

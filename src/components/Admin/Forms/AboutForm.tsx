@@ -12,8 +12,14 @@ const UserForm: React.FC = () => {
 
   useEffect(() => {
     fetch('/api/user')
-      .then(response => response.json())
-      .then(data => setUser(data));
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch about data');
+        }
+        return response.json();
+      })
+      .then(data => setUser(data))
+      .catch(err => console.log(err));
   }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
@@ -78,10 +84,10 @@ const UserForm: React.FC = () => {
         className="focus:shadow-outline rounded bg-blue-500 px-4 py-2 font-bold text-white hover:bg-blue-700 focus:outline-none">
         Update
       </button>
-       
+      
+ 
       {saveSuccess && <p className="text-xs italic text-green-500">Data updated successfully!</p>}
-      <hr className='my-6'/>
-
+      <hr className="my-6" />
     </form>
   );
 };
