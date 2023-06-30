@@ -29,7 +29,7 @@ const ProfileForm: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch('/api/profile1')
+    fetch('/api/profile')
       .then(response => {
         if (!response.ok) {
           throw new Error('Failed to fetch profile data');
@@ -42,7 +42,7 @@ const ProfileForm: React.FC = () => {
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    fetch('/api/profile1', {
+    fetch('/api/profile', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(profile),
