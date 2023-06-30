@@ -4,7 +4,6 @@ import Image from 'next/image';
 import {FC, memo, useState, useEffect} from 'react';
 
 import {SectionId} from '../../data/data';
-import heroDatas from '../../data/heroData.json';
 import Section from '../Layout/Section';
 import Socials from '../Socials';
 import { initializeApp } from 'firebase/app';
@@ -25,25 +24,85 @@ const firebaseConfig = {
 // Initialize Firebase
 initializeApp(firebaseConfig);
 
-const Hero: FC = memo(() => {
-  const {
-    imageSrc,
-    name,
-    description: {paragraphs},
-    actions,
-  } = heroDatas;
-const [fileUrl,setFileUrl] = useState('')  
-  const downloadFile = async () => {
-    // event.preventDefault();
+type Paragraph = {
+  text: string;
+  strong: {
+    text: string;
+    className: string;
+  };
+  text2: string;
+  strong2: {
+    text: string;
+    className: string;
+  };
+  text3: string;
+};
 
+type Action = {
+  href: string;
+  text: string;
+  primary: boolean;
+};
+
+type HeroData = {
+  imageSrc: string;
+  name: string;
+  description: {
+    paragraphs: Paragraph[];
+  };
+  actions: Action[];
+};
+
+
+
+
+const Hero: FC = memo(() => {
+    // Declare state variables for the fetched data and the loading state
+  // Declare state variables for the fetched data and the loading state
+  const [heroDatas, setHeroDatas] = useState<HeroData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);  // New loading state
+
+  const [fileUrl,setFileUrl] = useState('')  
+
+  const downloadFile = async () => {
     const storage = getStorage();
     const fileRef = ref(storage, 'Resume.pdf');
     const url = await getDownloadURL(fileRef);
-
-    // Assign the download URL to the href of the <a> tag
     setFileUrl(url)
   };
-  useEffect(()=>{downloadFile()},[downloadFile])
+
+  useEffect(()=>{
+    downloadFile();
+  },[downloadFile])
+
+  // Fetch data from the API when component mounts
+  useEffect(() => {
+    setIsLoading(true);  // Set loading state to true at the start of the request
+
+    fetch('/api/profile1')
+      .then(response => response.json())
+      .then((data: HeroData) => {  // Type annotation added here
+        setHeroDatas(data);
+        setIsLoading(false);  // Set loading state to false once the data is fetched
+      })
+      .catch(err => {
+        console.error('Error fetching profile:', err);
+        setIsLoading(false);  // Set loading state to false if there is an error
+      });
+  }, []);
+
+  // Check if data is being loaded
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  const {
+    name,
+    description: {paragraphs},
+    actions,
+  } = heroDatas!;  // The "!" means we're asserting that heroDatas is not null
+
+
 
   return (
     <Section noPadding sectionId={SectionId.Hero}>
@@ -53,7 +112,7 @@ const [fileUrl,setFileUrl] = useState('')
           className="absolute z-0 h-full w-full object-cover"
           // placeholder="blur"
           priority
-          src={imageSrc}
+          src="/images/header-background.webp"
           // objectFit="cover"
           fill
         />

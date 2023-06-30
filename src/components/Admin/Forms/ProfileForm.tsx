@@ -29,14 +29,20 @@ const ProfileForm: React.FC = () => {
   const [saveSuccess, setSaveSuccess] = useState<boolean>(false);
 
   useEffect(() => {
-    fetch('/api/profile')
-      .then(response => response.json())
-      .then(data => setProfile(data));
+    fetch('/api/profile1')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch profile data');
+        }
+        return response.json();
+      })
+      .then(data => setProfile(data))
+      .catch(err => console.log(err));
   }, []);
 
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
-    fetch('/api/profile', {
+    fetch('/api/profile1', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify(profile),
