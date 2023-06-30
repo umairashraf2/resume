@@ -79,8 +79,13 @@ const Hero: FC = memo(() => {
   useEffect(() => {
     setIsLoading(true);  // Set loading state to true at the start of the request
 
-    fetch('/api/profile1')
-      .then(response => response.json())
+    fetch('/api/profile')
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch social testimonials data');
+        }
+        return response.json();
+      })
       .then((data: HeroData) => {  // Type annotation added here
         setHeroDatas(data);
         setIsLoading(false);  // Set loading state to false once the data is fetched
@@ -90,6 +95,7 @@ const Hero: FC = memo(() => {
         setIsLoading(false);  // Set loading state to false if there is an error
       });
   }, []);
+
 
   // Check if data is being loaded
   if (isLoading) {
