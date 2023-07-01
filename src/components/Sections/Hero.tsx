@@ -6,8 +6,8 @@ import {FC, memo, useState, useEffect} from 'react';
 import {SectionId} from '../../data/data';
 import Section from '../Layout/Section';
 import Socials from '../Socials';
-import { initializeApp } from 'firebase/app';
-import { getStorage, ref, getDownloadURL } from "firebase/storage";
+import {initializeApp} from 'firebase/app';
+import {getStorage, ref, getDownloadURL} from 'firebase/storage';
 
 // Your Firebase configuration
 const firebaseConfig = {
@@ -19,7 +19,6 @@ const firebaseConfig = {
   appId: '1:771178122800:web:3402520bb668280bf0e7f5',
   measurementId: 'G-DECDJLFQ7X',
 };
-
 
 // Initialize Firebase
 initializeApp(firebaseConfig);
@@ -53,31 +52,28 @@ type HeroData = {
   actions: Action[];
 };
 
-
-
-
 const Hero: FC = memo(() => {
-    // Declare state variables for the fetched data and the loading state
+  // Declare state variables for the fetched data and the loading state
   // Declare state variables for the fetched data and the loading state
   const [heroDatas, setHeroDatas] = useState<HeroData | null>(null);
-  const [isLoading, setIsLoading] = useState(true);  // New loading state
+  const [isLoading, setIsLoading] = useState(true); // New loading state
 
-  const [fileUrl,setFileUrl] = useState('')  
+  const [fileUrl, setFileUrl] = useState('');
 
   const downloadFile = async () => {
     const storage = getStorage();
     const fileRef = ref(storage, 'Resume.pdf');
     const url = await getDownloadURL(fileRef);
-    setFileUrl(url)
+    setFileUrl(url);
   };
 
-  useEffect(()=>{
+  useEffect(() => {
     downloadFile();
-  },[downloadFile])
+  }, [downloadFile]);
 
   // Fetch data from the API when component mounts
   useEffect(() => {
-    setIsLoading(true);  // Set loading state to true at the start of the request
+    setIsLoading(true); // Set loading state to true at the start of the request
 
     fetch('/api/profile')
       .then(response => {
@@ -86,29 +82,33 @@ const Hero: FC = memo(() => {
         }
         return response.json();
       })
-      .then((data: HeroData) => {  // Type annotation added here
+      .then((data: HeroData) => {
+        // Type annotation added here
         setHeroDatas(data);
-        setIsLoading(false);  // Set loading state to false once the data is fetched
+        setIsLoading(false); // Set loading state to false once the data is fetched
       })
       .catch(err => {
         console.error('Error fetching profile:', err);
-        setIsLoading(false);  // Set loading state to false if there is an error
+        setIsLoading(false); // Set loading state to false if there is an error
       });
   }, []);
 
-
   // Check if data is being loaded
   if (isLoading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="flex h-screen items-center justify-center">
+        <div className="text-center">
+          <h1 className="text-4xl font-bold">Loading...</h1>
+        </div>
+      </div>
+    );
   }
 
   const {
     name,
     description: {paragraphs},
     actions,
-  } = heroDatas!;  // The "!" means we're asserting that heroDatas is not null
-
-
+  } = heroDatas!; // The "!" means we're asserting that heroDatas is not null
 
   return (
     <Section noPadding sectionId={SectionId.Hero}>
